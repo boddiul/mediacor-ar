@@ -1,6 +1,6 @@
 
-const panelShowSpeed = 20;
-const textOpenSpeed = 15;
+const panelShowSpeed = 20/2;
+const textOpenSpeed = 15/2;
 
 
 const panelCircleOffset = [0+10,90-10,180+10,270-10];
