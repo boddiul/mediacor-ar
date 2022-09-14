@@ -141,8 +141,8 @@ function initialize()
 	let smoothedRoot = new THREE.Group();
 	scene.add(smoothedRoot);
 	smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-		lerpPosition: 0.05,
-		lerpQuaternion: 0.1,
+		lerpPosition: 0.9,
+		lerpQuaternion: 0.5,
 		lerpScale: 0.7,
         //lerpStepDelay : 1/120
 		// minVisibleDelay: 1,
@@ -192,6 +192,7 @@ function initialize()
     raycastPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial( {color: 0x01ff01, visible: false} ));
     //raycastPlane.visible = false;
     raycastPlane.rotation.x = -Math.PI/2;
+    raycastPlane.position.y = logoHeight;
 	smoothedRoot.add( raycastPlane );
 
     for (let i=0;i<4;i++)
@@ -303,7 +304,7 @@ function update()
    
     for (let i=0;i<4;i++)
         {
-            let aa = (panelCircleOffset[i]+60+10*totalTime)/180*Math.PI;
+            let aa = (panelCircleOffset[i]+60+2*10*totalTime)/180*Math.PI;
             let ll = panelsShowK*panelsShowK;
 
 
@@ -318,7 +319,10 @@ function update()
             panelData[i].baseObj.getWorldQuaternion(q1);
             let v1 = panelData[i].mesh1.position;
 
-            v1.lerp(panelData[i].baseObj.getWorldPosition(),0.2);
+
+            // 0 1
+            // 1 0.05
+            v1.lerp(panelData[i].baseObj.getWorldPosition(),1-panelsShowK*0.95);
 
 
 
