@@ -11,7 +11,7 @@ var scene, camera, renderer, clock, deltaTime, totalTime;
 var dissTime;
 var raycaster;
 
-var raycastPlane, dummyTextPlane;
+var raycastPlane, dummyTextPlane, mediacorPattern;
 
 var arToolkitSource, arToolkitContext, smoothedControls;
 
@@ -19,7 +19,7 @@ var markerRoot1, markerRoot2;
 
 var mesh1;
 
-const texture_names = ["mediacor","mediacor_pattern","preview1","preview2","preview3","preview4","shadow","text1","text2","text3","text4"];
+const texture_names = ["mediacor","mediacor_pattern","mediacor_pattern_lag1","mediacor_pattern_lag2","preview1","preview2","preview3","preview4","shadow","text1","text2","text3","text4"];
 
 var textures = {};
 
@@ -176,17 +176,29 @@ function initialize()
     
 	smoothedRoot.add( shadowPlane );
     
-    const mediacorPattern = new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ),textures["mediacor_pattern"]);
-    mediacorPattern.position.y = logoHeight;
-    mediacorPattern.rotation.x = -Math.PI/2;
-	smoothedRoot.add( mediacorPattern );
+    mediacorPattern = 
+    [
+        new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ),textures["mediacor_pattern"]),
+        new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ),textures["mediacor_pattern_lag1"]),
+        new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ),textures["mediacor_pattern_lag2"])
+    ];
+    for (let i=0;i<3;i++)
+        scene.add( mediacorPattern[i] );
 
-    
-    const mediacorName = new THREE.Mesh(new THREE.PlaneGeometry( 1, 121/1024 ),textures["mediacor"]);
-    mediacorName.position.y = logoHeight+0.07;
-    mediacorName.position.z = 0.3;
-    mediacorName.rotation.x = -Math.PI/2;
-	smoothedRoot.add( mediacorName );
+
+    mediacorPatternPos = new THREE.Object3D();
+    mediacorPatternPos.position.y = logoHeight;
+    mediacorPatternPos.rotation.x = -Math.PI/2;
+    smoothedRoot.add( mediacorPatternPos );
+
+    mediacorName =  new THREE.Mesh(new THREE.PlaneGeometry( 1, 121/1024 ),textures["mediacor"])
+    scene.add(mediacorName);
+
+    mediacorNamePos = new THREE.Object3D();
+    mediacorNamePos.position.y = logoHeight+0.07;
+    mediacorNamePos.position.z = 0.3;
+    mediacorNamePos.rotation.x = -Math.PI/2;
+	smoothedRoot.add( mediacorNamePos );
 
 
     raycastPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial( {color: 0x01ff01, visible: false} ));
@@ -301,6 +313,25 @@ function update()
     }
 
     dummyTextPlane.position.y = -0.4 + Math.sin(totalTime*2)/20;
+
+    
+    let k = Math.floor(Math.random()*3);
+
+    if (Math.sin(totalTime*2)<0)
+        k = 0;
+    for (let i=0;i<3;i++)
+
+    {
+        mediacorPattern[i].visible = i===k && mainVisible;
+        mediacorPattern[i].position.lerp(mediacorPatternPos.getWorldPosition(),0.4);
+
+        mediacorPattern[i].rotation.setFromQuaternion(mediacorPatternPos.getWorldQuaternion());
+
+    }
+
+    mediacorName.visible = mainVisible;
+    mediacorName.position.lerp(mediacorNamePos.getWorldPosition(),0.4);
+    mediacorName.rotation.setFromQuaternion(mediacorNamePos.getWorldQuaternion());
    
     for (let i=0;i<4;i++)
         {
@@ -323,7 +354,7 @@ function update()
             // 0 1
             // 1 0.05
             v1.lerp(panelData[i].baseObj.getWorldPosition(),1-panelsShowK*0.95);
-
+            v1.y = panelData[i].baseObj.getWorldPosition().y;
 
 
 
