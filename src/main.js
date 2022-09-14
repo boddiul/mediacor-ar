@@ -129,7 +129,12 @@ function initialize()
 	
 	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
 		type : 'pattern',
-		patternUrl : "data/q1.patt",
+		patternUrl : "data/mcor.patt",
+	})
+
+	let markerControls2 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
+		type : 'pattern',
+		patternUrl : "data/kanji.patt",
 	})
 
 	// interpolates from last position to create smoother transitions when moving.
@@ -137,10 +142,10 @@ function initialize()
 	let smoothedRoot = new THREE.Group();
 	scene.add(smoothedRoot);
 	smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-		lerpPosition: 0.8,
-		lerpQuaternion: 0.8,
-		lerpScale: 1,
-        lerpStepDelay : 1/120
+		lerpPosition: 0.4,
+		lerpQuaternion: 0.4,
+		lerpScale: 0.5,
+        //lerpStepDelay : 1/120
 		// minVisibleDelay: 1,
 		// minUnvisibleDelay: 1,
 	});
