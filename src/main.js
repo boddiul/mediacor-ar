@@ -129,7 +129,7 @@ function initialize()
 	
 	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
 		type : 'pattern',
-		patternUrl : "data/kanji.patt",
+		patternUrl : "data/q1.patt",
 	})
 
 	// interpolates from last position to create smoother transitions when moving.
@@ -140,6 +140,7 @@ function initialize()
 		lerpPosition: 0.8,
 		lerpQuaternion: 0.8,
 		lerpScale: 1,
+        lerpStepDelay : 1/120
 		// minVisibleDelay: 1,
 		// minUnvisibleDelay: 1,
 	});
@@ -327,6 +328,8 @@ function update()
             v.multiplyScalar(panelData[i].openK*0.95);
             v1.add(v);*/
 
+
+            
 
             let v = new THREE.Vector3(
                 v1.x + (v2.x-v1.x)*panelData[i].openK*0.95,
