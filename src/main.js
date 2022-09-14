@@ -1,6 +1,6 @@
 
 const panelShowSpeed = 20/2;
-const textOpenSpeed = 15/3;
+const textOpenSpeed = 15/2;
 
 
 const logoHeight = 0.75;
