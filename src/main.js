@@ -1,4 +1,3 @@
-
 const panelShowSpeed = 20/2;
 const textOpenSpeed = 15/2;
 
@@ -143,8 +142,8 @@ function initialize()
 	scene.add(smoothedRoot);
 	smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
 		lerpPosition: 0.4,
-		lerpQuaternion: 0.4,
-		lerpScale: 0.5,
+		lerpQuaternion: 0.1,
+		lerpScale: 0.7,
         //lerpStepDelay : 1/120
 		// minVisibleDelay: 1,
 		// minUnvisibleDelay: 1,
@@ -317,7 +316,12 @@ function update()
 
             let q1 = new THREE.Quaternion();
             panelData[i].baseObj.getWorldQuaternion(q1);
-            let v1 = panelData[i].baseObj.getWorldPosition();
+            let v1 = panelData[i].mesh1.position;
+
+            v1.lerp(panelData[i].baseObj.getWorldPosition(),0.2);
+
+
+
 
 
             let v2 = dummyTextPlane.getWorldPosition();
@@ -332,6 +336,8 @@ function update()
             v.sub(v1);
             v.multiplyScalar(panelData[i].openK*0.95);
             v1.add(v);*/
+
+
 
 
             
@@ -482,3 +488,4 @@ function animate()
 	update();
 	render();
 }
+
