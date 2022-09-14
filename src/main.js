@@ -1,6 +1,9 @@
 
 const panelShowSpeed = 20/2;
-const textOpenSpeed = 15/2;
+const textOpenSpeed = 15/3;
+
+
+const logoHeight = 0.75;
 
 
 const panelCircleOffset = [0+10,90-10,180+10,270-10];
@@ -163,19 +166,19 @@ function initialize()
     scene.add( dummyTextPlane );
 
 
-    const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ),textures["shadow"]);
+    const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry( 2, 2 ),textures["shadow"]);
     shadowPlane.rotation.x = -Math.PI/2;
     
 	smoothedRoot.add( shadowPlane );
     
     const mediacorPattern = new THREE.Mesh(new THREE.PlaneGeometry( 1, 1 ),textures["mediacor_pattern"]);
-    mediacorPattern.position.y = 0.25;
+    mediacorPattern.position.y = logoHeight;
     mediacorPattern.rotation.x = -Math.PI/2;
 	smoothedRoot.add( mediacorPattern );
 
     
     const mediacorName = new THREE.Mesh(new THREE.PlaneGeometry( 1, 121/1024 ),textures["mediacor"]);
-    mediacorName.position.y = 0.3;
+    mediacorName.position.y = logoHeight+0.07;
     mediacorName.position.z = 0.3;
     mediacorName.rotation.x = -Math.PI/2;
 	smoothedRoot.add( mediacorName );
@@ -295,11 +298,11 @@ function update()
    
     for (let i=0;i<4;i++)
         {
-            let aa = (panelCircleOffset[i]+60+6*totalTime)/180*Math.PI;
+            let aa = (panelCircleOffset[i]+60+10*totalTime)/180*Math.PI;
             let ll = panelsShowK*panelsShowK;
 
 
-            panelData[i].baseObj.position.y = 0.15;
+            panelData[i].baseObj.position.y = logoHeight+0.50+Math.sin(i+totalTime*3)/15;
 
 
             panelData[i].baseObj.position.x = Math.cos(aa)*ll + Math.sin(aa)*ll;
