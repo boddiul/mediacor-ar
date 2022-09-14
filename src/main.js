@@ -246,6 +246,7 @@ function update()
 
 
     let dd = clock.getDelta();
+    dd = 1/60;
 
     for (let i=0;i<4;i++)
 
