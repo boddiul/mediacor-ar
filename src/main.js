@@ -125,7 +125,8 @@ function initialize()
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	//renderer.setSize( 640, 480 );
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(window.devicePixelRatio*2);
+    console.log(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 	renderer.domElement.style.position = 'absolute'
