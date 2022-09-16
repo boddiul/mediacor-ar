@@ -1,11 +1,60 @@
 const panelShowSpeed = 20/2;
 const textOpenSpeed = 15/2;
 
+const panelsNum = 11; 
+
 
 const logoHeight = 0.75;
 
 
-const panelCircleOffset = [0+10,90-10,180+10,270-10];
+//const panelCircleOffset = [0+10,90-10,180+10,270-10];
+
+var panelStartOffset = [
+/*[-1,0,-1],
+[1,0,-1],
+[-1,0,1],
+[1,0,1],
+[-1,0,-1],
+[1,0,-1],
+[-1,0,1],
+[1,1,1],
+[-1,1,-1],
+[1,1,-1],
+[-1,1,1],*/
+
+/*[0,0,0.4],
+[-0.3,0,0.35],
+[0.3,0,0.35],
+[0,0,0.2],
+[-0.3,0,0],
+[0.3,0,0],
+[-0.2,0,-0.2],
+[0.2,0,-0.2],
+[-0.4,0,0.15],
+[0,0,-0.4],
+[0.4,0,0.15],*/
+
+[0,0,-0.75],
+[-0.35,0,-0.5],
+[0.35,0,-0.5],
+[-0.55,0,-0.2],
+[0.55,0,-0.2],
+[-0.5,0,0.15],
+[0.5,0,0.15],
+[-0.65,0,0.5],
+[0.65,0,0.5],
+[-0.35,0,0.8],
+[0.35,0,0.8]
+];
+/*for (let i=0;i<11;i++)
+    panelStartOffset.push([-2+Math.random()*4,1+Math.random()*0.5,-4+Math.random()*8])*/
+
+/*for (let i=0;i<11;i++)
+        panelStartOffset[i] = [6*panelStartOffset[i][0],logoHeight+1*panelStartOffset[i][1],-7*panelStartOffset[i][2]]
+*/
+for (let i=0;i<11;i++)
+        panelStartOffset[i] = [3*panelStartOffset[i][0],logoHeight+1*(1-Math.abs(panelStartOffset[i][0])),3*panelStartOffset[i][2]]
+
 
 var scene, camera, renderer, clock, deltaTime, totalTime;
 var dissTime;
@@ -19,7 +68,19 @@ var markerRoot1, markerRoot2;
 
 var mesh1;
 
-const texture_names = ["mediacor","mediacor_pattern","mediacor_pattern_lag1","mediacor_pattern_lag2","preview1","preview2","preview3","preview4","shadow","text1","text2","text3","text4"];
+//const texture_names = ["back","mediacor","mediacor_pattern","mediacor_pattern_lag1","mediacor_pattern_lag2","preview1","preview2","preview3","preview4","shadow","text1","text2","text3","text4"];
+
+const texture_names = ["back1","back2","back3",
+                    "preview_back",
+                    "mediacor","shadow",
+                    "mediacor_pattern","mediacor_pattern_lag1","mediacor_pattern_lag2",
+                    "photo_cinema","help"
+                    ]
+for (let i=1;i<=11;i++)
+    {
+        texture_names.push("preview_text"+i);
+        texture_names.push("text"+i)
+    }
 
 var textures = {};
 
@@ -165,7 +226,7 @@ function initialize()
     
     dummyTextPlane = new THREE.Mesh( new THREE.PlaneGeometry( 1, 1 ), new THREE.MeshBasicMaterial({visible : false}) );
 
-    dummyTextPlane.position.z = -2.25;
+    dummyTextPlane.position.z = -3;
     
     
     scene.add( dummyTextPlane );
@@ -207,24 +268,50 @@ function initialize()
     raycastPlane.position.y = logoHeight;
 	smoothedRoot.add( raycastPlane );
 
-    for (let i=0;i<4;i++)
+    for (let i=0;i<panelsNum;i++)
     {
-        let mesh1 = new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.5),textures["preview"+(i+1)]);
-        let mesh2 = new THREE.Mesh(new THREE.PlaneGeometry(1,1),textures["text"+(i+1)]);
+        let mesh1 = new THREE.Mesh(new THREE.PlaneGeometry(7/10,1/3),textures["preview_back"]);
+        let header = new THREE.Mesh(new THREE.PlaneGeometry(1,1/3),textures["preview_text"+(i+1)]);
+        let mesh2 = new THREE.Mesh(new THREE.PlaneGeometry(1,2/3),textures["back"+(1+Math.floor(Math.random() * 3))]);
+        let txt = new THREE.Mesh(new THREE.PlaneGeometry(1,2/3),textures["text"+(i+1)]);
+
         let baseObj = new THREE.Object3D();
 
         baseObj.rotation.x = -Math.PI/2;
+        baseObj.rotation.y = panelStartOffset[i][0]/10;
         panelData.push({
             "mesh1" : mesh1,
+            "header":header,
             "mesh2" : mesh2,
+            "txt":txt,
             "baseObj" : baseObj,
             "openK": 0,
-            "openState": "closed"
+            "openState": "closed",
+            "visited" : false
         })
+    
 
         smoothedRoot.add(baseObj);
         scene.add(mesh1);
-        scene.add(mesh2);
+
+        header.position.z = 0.05;
+        mesh1.add(header);
+
+        mesh2.position.y = -0.5;
+        mesh1.add(mesh2);
+
+        txt.position.y = -0.5;
+        txt.position.z = 0.05;
+        mesh1.add(txt);
+
+        if (i===4)
+        {
+            panelData[i]["img"] = new THREE.Mesh(new THREE.PlaneGeometry(0.7,506/811*0.7),textures["photo_cinema"]);
+
+            panelData[i]["img"].position.y = -0.7;
+            panelData[i]["img"].position.z = 0.2;
+            mesh1.add(panelData[i]["img"]);
+        }
     }
 
 
@@ -234,6 +321,12 @@ function initialize()
 
     dissTime = 0;
 
+
+
+    helpPlane = new THREE.Mesh(new THREE.PlaneGeometry(0.7,0.7),textures["help"]);
+    helpPlane.position.z = -2;
+    helpPlane.material.opacity = 0;
+    scene.add( helpPlane );
 }
 
 
@@ -245,6 +338,8 @@ var panelsShowK = 0;
 
 
 var mainVisible = false;
+
+var firstShow = false;
 
 function update()
 {
@@ -265,11 +360,13 @@ function update()
 
     mainVisible = markerRoot1.visible;
 
+    if (mainVisible)
+        firstShow = true;
 
     let dd = clock.getDelta();
     dd = 1/60;
 
-    for (let i=0;i<4;i++)
+    for (let i=0;i<panelsNum;i++)
 
     if (panelData[i].openState==="opening")
     {
@@ -294,6 +391,7 @@ function update()
         }
     }
 
+    /*
     if (mainVisible)
     {
         if (panelsShowK<1)
@@ -310,9 +408,17 @@ function update()
                 panelsShowK-=panelShowSpeed*dd;
             if (panelsShowK<=0)
                 panelsShowK=0;
+    }*/
+    if (mainVisible)
+    {
+        if (panelsShowK<1)
+            panelsShowK+=panelShowSpeed*dd;
+        if (panelsShowK>=1)
+            panelsShowK=1;
     }
 
-    dummyTextPlane.position.y = -0.4 + Math.sin(totalTime*2)/20;
+
+    dummyTextPlane.position.y = 0 + Math.sin(totalTime*2)/20;
 
     
     let k = Math.floor(Math.random()*3);
@@ -322,20 +428,39 @@ function update()
     for (let i=0;i<3;i++)
 
     {
-        mediacorPattern[i].visible = i===k && mainVisible;
-        mediacorPattern[i].position.lerp(mediacorPatternPos.getWorldPosition(),0.4);
 
-        mediacorPattern[i].rotation.setFromQuaternion(mediacorPatternPos.getWorldQuaternion());
+        mediacorPattern[i].visible = i===k && firstShow;
 
+        if (mainVisible)
+        {
+            mediacorPattern[i].position.lerp(mediacorPatternPos.getWorldPosition(),0.1);
+            mediacorPattern[i].position.z = mediacorPatternPos.getWorldPosition().z;
+            mediacorPattern[i].rotation.setFromQuaternion(mediacorPatternPos.getWorldQuaternion());
+
+        }
+        
     }
 
-    mediacorName.visible = mainVisible;
-    mediacorName.position.lerp(mediacorNamePos.getWorldPosition(),0.4);
-    mediacorName.rotation.setFromQuaternion(mediacorNamePos.getWorldQuaternion());
-   
-    for (let i=0;i<4;i++)
+    mediacorName.visible = firstShow;
+    if (mainVisible)
+    {
+        mediacorName.position.lerp(mediacorNamePos.getWorldPosition(),0.1);
+        mediacorName.position.z = mediacorNamePos.getWorldPosition().z;
+        mediacorName.rotation.setFromQuaternion(mediacorNamePos.getWorldQuaternion());
+       
+    }
+
+    helpPlane.visible = !firstShow;
+
+    if (helpPlane.material.opacity<0.75)
+        helpPlane.material.opacity+=0.0005
+
+    if (helpPlane.material.opacity>=0.75)
+        helpPlane.material.opacity = 0.75;
+    
+    for (let i=0;i<panelsNum;i++)
         {
-            let aa = (panelCircleOffset[i]+60+2*10*totalTime)/180*Math.PI;
+            /*let aa = (panelCircleOffset[i]+60+2*10*totalTime)/180*Math.PI;
             let ll = panelsShowK*panelsShowK;
 
 
@@ -343,7 +468,18 @@ function update()
 
 
             panelData[i].baseObj.position.x = Math.cos(aa)*ll + Math.sin(aa)*ll;
-            panelData[i].baseObj.position.z = Math.sin(aa)*ll - Math.cos(aa)*ll;
+            panelData[i].baseObj.position.z = Math.sin(aa)*ll - Math.cos(aa)*ll;*/
+
+            let ll = panelsShowK*panelsShowK;
+
+            let aa = i+totalTime;
+
+            panelData[i].baseObj.position.x = panelStartOffset[i][0]+Math.sin(aa)/4;
+            panelData[i].baseObj.position.y = panelStartOffset[i][1]-Math.cos(1+aa*0.8)/4;
+            panelData[i].baseObj.position.z = panelStartOffset[i][2]+Math.sin(2+aa*1.2)/8;
+
+
+            panelData[i].baseObj.position.multiplyScalar(ll);
 
 
             let q1 = new THREE.Quaternion();
@@ -354,7 +490,7 @@ function update()
             // 0 1
             // 1 0.05
             v1.lerp(panelData[i].baseObj.getWorldPosition(),1-panelsShowK*0.95);
-            v1.y = panelData[i].baseObj.getWorldPosition().y;
+            //v1.y = panelData[i].baseObj.getWorldPosition().y;
 
 
 
@@ -388,22 +524,34 @@ function update()
             // 1 1
             let sc = 2-panelData[i].openK;
             panelData[i].mesh1.scale.set(sc,sc,sc);
-            panelData[i].mesh2.scale.set(sc,sc,sc);
 
+            //console.log(panelData[i].openK,sc);
+            //panelData[i].mesh2.scale.set(sc,sc,sc);
+
+           
+            
             let showT = (panelData[i].openK>0.5); //|| (panelData[i].openK>0.1 && Math.sin(totalTime*50)>0); 
         
             panelData[i].mesh1.rotation.setFromQuaternion(q1);
             panelData[i].mesh1.position.copy(v);
-            panelData[i].mesh1.visible = !showT && panelsShowK>0.1;
+            panelData[i].mesh1.visible = true;//!showT && panelsShowK>0.1;
+
+            
+            /*
 
             panelData[i].mesh2.rotation.setFromQuaternion(q1);
-            panelData[i].mesh2.position.copy(v);
+            panelData[i].mesh2.position.copy(v);*/
             panelData[i].mesh2.visible = showT;
+            panelData[i].txt.visible = showT;
             
+
+            if ("img" in panelData[i])
+                panelData[i].img.visible = showT;
             //panelData[i].mesh1.position.y+=1.5*panelData[i].openK;
 
 
-            
+            panelData[i].header.material.opacity = panelData[i].visited &&  panelData[i].openK < 0.5 ? 0.5 : 1;
+
 
             /*
             panelData[i].mesh1.rotation.setFromQuaternion(t);
@@ -415,6 +563,12 @@ function update()
             //panelData[i].mesh.position.setFromQuaternion(t);
         }
     
+
+
+    for (let i=0;i<panelsNum;i++)
+        if (panelData[i].openState == "opened")
+           panelData[i].visited = true;
+
         
 }
 
@@ -429,7 +583,7 @@ function onDocumentClick(event) {
 
     let topHalf = clickY>=-0.2;
 
-    console.log(topHalf);
+    console.log(clickX,clickY);
 
     
     //raycaster.setFromCamera({x:clickX,y:clickY}, camera);
@@ -446,7 +600,7 @@ function onDocumentClick(event) {
 
     let anyAnim = false;
     
-    for (let i=0;i<4;i++)
+    for (let i=0;i<panelsNum;i++)
     {
 
         if (panelData[i].openState =="opened")
@@ -455,56 +609,79 @@ function onDocumentClick(event) {
             anyAnim = true;
     }
 
-    if (opened!=-1 && !topHalf)
+    if (opened!=-1 /*&& !topHalf*/)
         panelData[opened].openState = "closing";
 
-    else if (mainVisible && !anyAnim)
+    else if (!anyAnim)
     {
-        let intersections = raycaster.intersectObject(raycastPlane);
 
+        let bestD = -1;
+        let bestI = -1;
 
-        if (intersections.length>0)
+        for (let i=0;i<panelsNum;i++)
+        if (firstShow)
         {
-
-            let v = intersections[0].point;
-
-
-            let bestD = -1;
-            let bestI = -1;
-
-            for (let i=0;i<4;i++)
+            let intersections = raycaster.intersectObjects([panelData[i].mesh1,panelData[i].header]);
+            if (intersections.length>0)
             {
-
-                if (panelData[i].openState !="closed")
-                    continue;
-
-                let dist = v.distanceTo(panelData[i].baseObj.getWorldPosition());
-
-                if (bestD==-1 || dist<bestD)
-                {
-                    bestD = dist;
-                    bestI = i;
-                }
+                bestI = i;
+                bestD = 0;
             }
 
-            if (opened!=-1 && bestD>1)
-                panelData[opened].openState = "closing";
-            else if (bestI!=-1)
+        }
+
+
+        if (bestI===-1)
+        {
+            let intersections = raycaster.intersectObject(raycastPlane);
+
+
+            if (intersections.length>0)
+            {
+    
+                let v = intersections[0].point;
+    
+    
+    
+                for (let i=0;i<panelsNum;i++)
                 {
+    
+                    if (panelData[i].openState !="closed")
+                        continue;
+    
+                    let dist = v.distanceTo(panelData[i].baseObj.getWorldPosition());
+    
+                    if (bestD==-1 || dist<bestD)
+                    {
+                        bestD = dist;
+                        bestI = i;
+                    }
+                }
+    
+                
+                    
+                
+            }
+        }
+        
+
+        if (opened!=-1 && bestD>1)
+            panelData[opened].openState = "closing";
+        else if (bestI!=-1)
+            {
                     //selectedPanel = bestI;
                     panelData[bestI].openState = "opening";
         
                     
-                    for (let i=0;i<4;i++)
-                    {
+                for (let i=0;i<panelsNum;i++)
+                {
                         if (panelData[i].openState == "opened")
                             panelData[i].openState = "closing";
-                    }
                 }
-                
-            
-        }
+            }
     }
+
+    
 
 }
 
