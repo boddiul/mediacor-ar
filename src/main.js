@@ -1,7 +1,7 @@
 const panelShowSpeed = 20/2;
 const textOpenSpeed = 15/2;
 
-const panelsNum = 11; 
+const panelsNum = 12; 
 
 
 const logoHeight = 0.75;
@@ -44,7 +44,8 @@ var panelStartOffset = [
 [-0.65,0,0.5],
 [0.65,0,0.5],
 [-0.35,0,0.8],
-[0.35,0,0.8]
+[0.35,0,0.8],
+[0,0,0.5]
 ];
 /*for (let i=0;i<11;i++)
     panelStartOffset.push([-2+Math.random()*4,1+Math.random()*0.5,-4+Math.random()*8])*/
@@ -52,7 +53,7 @@ var panelStartOffset = [
 /*for (let i=0;i<11;i++)
         panelStartOffset[i] = [6*panelStartOffset[i][0],logoHeight+1*panelStartOffset[i][1],-7*panelStartOffset[i][2]]
 */
-for (let i=0;i<11;i++)
+for (let i=0;i<panelsNum;i++)
         panelStartOffset[i] = [3*panelStartOffset[i][0],logoHeight+1*(1-Math.abs(panelStartOffset[i][0])),3*panelStartOffset[i][2]]
 
 
@@ -76,7 +77,7 @@ const texture_names = ["back1","back2","back3",
                     "mediacor_pattern","mediacor_pattern_lag1","mediacor_pattern_lag2",
                     "photo_cinema","help"
                     ]
-for (let i=1;i<=11;i++)
+for (let i=1;i<=panelsNum;i++)
     {
         texture_names.push("preview_text"+i);
         texture_names.push("text"+i)
@@ -303,7 +304,8 @@ function initialize()
             "baseObj" : baseObj,
             "openK": 0,
             "openState": "closed",
-            "visited" : false
+            "visited" : false,
+            "visible" : i!==11
         })
     
 
@@ -478,6 +480,16 @@ function update()
     if (helpPlane.material.opacity>=0.75)
         helpPlane.material.opacity = 0.75;
     
+
+    let vsum = 0;
+    
+    for (let i=0;i<panelsNum;i++)
+        if (panelData[i].visited)
+            vsum+=1;
+
+    if (vsum>10)
+        panelData[11].visible = true;
+        
     for (let i=0;i<panelsNum;i++)
         {
             /*let aa = (panelCircleOffset[i]+60+2*10*totalTime)/180*Math.PI;
@@ -550,11 +562,11 @@ function update()
 
            
             
-            let showT = (panelData[i].openK>0.5); //|| (panelData[i].openK>0.1 && Math.sin(totalTime*50)>0); 
+            let showT = (panelData[i].openK>0.5) && panelData[i].visible; //|| (panelData[i].openK>0.1 && Math.sin(totalTime*50)>0); 
         
             panelData[i].mesh1.rotation.setFromQuaternion(q1);
             panelData[i].mesh1.position.copy(v);
-            panelData[i].mesh1.visible = true;//!showT && panelsShowK>0.1;
+            panelData[i].mesh1.visible = panelData[i].visible;//!showT && panelsShowK>0.1;
 
             
             /*
@@ -601,8 +613,7 @@ function onDocumentClick(event) {
     let clickX = (event.clientX / window.innerWidth) * 2 - 1;
     let clickY = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    let topHalf = clickY>=-0.2;
-
+    let topHalf = clickY>=-0.2
     console.log(clickX,clickY);
 
     
@@ -629,6 +640,16 @@ function onDocumentClick(event) {
         else if (panelData[i].openState =="opening" || panelData[i].openState =="closing")
             anyAnim = true;
     }
+
+    if (opened===11 && clickY<=-0.25 && clickY>=-0.6)
+    {
+        if (clickX>0)
+            openURL("https://www.instagram.com/media_cor/")
+        else
+            openURL("https://www.facebook.com/Mediacor-104019272103551")
+        return;
+    }
+
 
     if (opened!=-1 /*&& !topHalf*/)
         panelData[opened].openState = "closing";
@@ -672,6 +693,8 @@ function onDocumentClick(event) {
                 for (let i=0;i<panelsNum;i++)
                 {
     
+                    if (!panelData[i].visible)
+                        continue;
                     if (panelData[i].openState !="closed")
                         continue;
     
@@ -730,3 +753,22 @@ function animate()
 	render();
 }
 
+function openURL(url)
+{
+    
+
+    let gameCanvas = document.getElementsByTagName('canvas')[0];
+
+            if (gameCanvas !== null)  {
+                let endInteractFunction = function() {
+                    window.open(url, this.mode, this.mode === '' ? `width=${this.width},height=${this.height}` : '');
+                    gameCanvas.onmouseup = null;
+                    gameCanvas.ontouchend = null;
+                }
+
+                gameCanvas.ontouchend = endInteractFunction;
+                gameCanvas.onmouseup = endInteractFunction;
+            }
+
+    
+}
