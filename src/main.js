@@ -125,8 +125,8 @@ function initialize()
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	//renderer.setSize( 640, 480 );
-    renderer.setPixelRatio(window.devicePixelRatio*2);
-    console.log(window.devicePixelRatio);
+    renderer.setPixelRatio(window.devicePixelRatio*1.5);
+    //console.log(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 	renderer.domElement.style.position = 'absolute'
@@ -434,7 +434,7 @@ function update()
 
         if (mainVisible)
         {
-            mediacorPattern[i].position.lerp(mediacorPatternPos.getWorldPosition(),0.1);
+            mediacorPattern[i].position.lerp(mediacorPatternPos.getWorldPosition(),0.1*4);
             mediacorPattern[i].position.z = mediacorPatternPos.getWorldPosition().z;
             mediacorPattern[i].rotation.setFromQuaternion(mediacorPatternPos.getWorldQuaternion());
 
@@ -445,7 +445,7 @@ function update()
     mediacorName.visible = firstShow;
     if (mainVisible)
     {
-        mediacorName.position.lerp(mediacorNamePos.getWorldPosition(),0.1);
+        mediacorName.position.lerp(mediacorNamePos.getWorldPosition(),0.1*4);
         mediacorName.position.z = mediacorNamePos.getWorldPosition().z;
         mediacorName.rotation.setFromQuaternion(mediacorNamePos.getWorldQuaternion());
        
@@ -454,7 +454,7 @@ function update()
     helpPlane.visible = !firstShow;
 
     if (helpPlane.material.opacity<0.75)
-        helpPlane.material.opacity+=0.0005
+        helpPlane.material.opacity+=0.0002
 
     if (helpPlane.material.opacity>=0.75)
         helpPlane.material.opacity = 0.75;
@@ -490,7 +490,7 @@ function update()
 
             // 0 1
             // 1 0.05
-            v1.lerp(panelData[i].baseObj.getWorldPosition(),1-panelsShowK*0.95);
+            v1.lerp(panelData[i].baseObj.getWorldPosition(),1-panelsShowK*0.75);
             //v1.y = panelData[i].baseObj.getWorldPosition().y;
 
 
