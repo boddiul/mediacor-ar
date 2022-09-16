@@ -137,7 +137,7 @@ function initialize()
 
     renderer.setSize(window.innerWidth,window.innerHeight);
 
-    renderer.setPixelRatio(window.devicePixelRatio)
+    //renderer.setPixelRatio(window.devicePixelRatio)
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
 	renderer.domElement.style.left = '0px'
