@@ -487,9 +487,9 @@ function update()
         if (panelData[i].visited)
             vsum+=1;
 
-    if (vsum>10)
+    if (vsum>4)
         panelData[11].visible = true;
-        
+
     for (let i=0;i<panelsNum;i++)
         {
             /*let aa = (panelCircleOffset[i]+60+2*10*totalTime)/180*Math.PI;
