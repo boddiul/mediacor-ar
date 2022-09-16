@@ -310,7 +310,10 @@ function initialize()
         smoothedRoot.add(baseObj);
         scene.add(mesh1);
 
+        
         header.position.z = 0.05;
+        //header.renderOrder = -1;
+        header.material.depthTest = false;
         mesh1.add(header);
 
         mesh2.position.y = -0.5;
@@ -318,6 +321,7 @@ function initialize()
 
         txt.position.y = -0.5;
         txt.position.z = 0.05;
+        //txt.renderOrder = -1;
         mesh1.add(txt);
 
         if (i===4)
