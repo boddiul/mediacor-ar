@@ -125,8 +125,8 @@ function initialize()
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	//renderer.setSize( 640, 480 );
-    renderer.setPixelRatio(window.devicePixelRatio*2);
-    //console.log(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.max(2,window.devicePixelRatio));
+
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 	renderer.domElement.style.position = 'absolute'
@@ -190,7 +190,7 @@ function initialize()
 	
 	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
 		type : 'pattern',
-		patternUrl : "data/mcor.patt",
+		patternUrl : "data/mcor2.patt",
 	})
 
 	let markerControls2 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
