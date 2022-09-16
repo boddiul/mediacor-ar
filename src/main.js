@@ -126,14 +126,12 @@ function initialize()
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	//renderer.setSize( 640, 480 );
 
-    /*
+    
     
     console.log(window.devicePixelRatio);
     console.log(window.innerWidth<window.innerHeight);
     console.log(window.devicePixelRatio*3);
-    console.log(window.innerWidth<window.innerHeight? window.devicePixelRatio*3 : window.devicePixelRatio)*/
-    
-    
+    console.log(window.innerWidth<window.innerHeight? window.devicePixelRatio*3 : window.devicePixelRatio)
     //renderer.setPixelRatio(window.innerWidth<window.innerHeight? window.devicePixelRatio*3 : window.devicePixelRatio);
 
     renderer.setPixelRatio(window.devicePixelRatio*3);
