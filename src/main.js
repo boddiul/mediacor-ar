@@ -130,9 +130,9 @@ function initialize()
     
     console.log(window.devicePixelRatio);
     console.log(window.innerWidth<window.innerHeight);
-    console.log(window.devicePixelRatio*1.5);
-    console.log(window.innerWidth<window.innerHeight? window.devicePixelRatio*1.5 : window.devicePixelRatio)
-    renderer.setPixelRatio(window.innerWidth<window.innerHeight? window.devicePixelRatio*1.5 : window.devicePixelRatio);
+    console.log(window.devicePixelRatio*2);
+    console.log(window.innerWidth<window.innerHeight? window.devicePixelRatio*2 : window.devicePixelRatio)
+    renderer.setPixelRatio(window.innerWidth<window.innerHeight? window.devicePixelRatio*2 : window.devicePixelRatio);
 
 
     renderer.setSize(window.innerWidth,window.innerHeight);
