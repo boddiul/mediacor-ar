@@ -106,7 +106,7 @@ loadTextures();
 var panelData = [];
 
 
-
+var testCube;
 function initialize()
 {
 
@@ -116,7 +116,7 @@ function initialize()
 	let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
 	scene.add( ambientLight );
 				
-	camera = new THREE.Camera();
+	camera = new THREE.PerspectiveCamera();
 	scene.add(camera);
 
 	renderer = new THREE.WebGLRenderer({
@@ -125,7 +125,7 @@ function initialize()
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	//renderer.setSize( 640, 480 );
-    renderer.setPixelRatio(window.devicePixelRatio*1.5);
+    renderer.setPixelRatio(window.devicePixelRatio*2);
     //console.log(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -263,10 +263,16 @@ function initialize()
 	smoothedRoot.add( mediacorNamePos );
 
 
+
+    /*
+    testCube = new THREE.Mesh(new THREE.BoxGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial({color: 0x110000}));
+
+    scene.add(testCube);*/
+
     raycastPlane = new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial( {color: 0x01ff01, visible: false} ));
     //raycastPlane.visible = false;
     raycastPlane.rotation.x = -Math.PI/2;
-    raycastPlane.position.y = logoHeight;
+    raycastPlane.position.y = logoHeight+0.5;
 	smoothedRoot.add( raycastPlane );
 
     for (let i=0;i<panelsNum;i++)
@@ -552,7 +558,7 @@ function update()
 
 
             panelData[i].header.material.opacity = panelData[i].visited &&  panelData[i].openK < 0.5 ? 0.5 : 1;
-
+            
 
             /*
             panelData[i].mesh1.rotation.setFromQuaternion(t);
@@ -587,14 +593,15 @@ function onDocumentClick(event) {
     console.log(clickX,clickY);
 
     
-    //raycaster.setFromCamera({x:clickX,y:clickY}, camera);
+    raycaster.setFromCamera({x:clickX,y:clickY}, camera);
 
+    /*
     const camInverseProjection = new THREE.Matrix4().getInverse(camera.projectionMatrix);
     const cameraPosition = new THREE.Vector3().applyMatrix4(camInverseProjection);
     const mousePosition = new THREE.Vector3(clickX, clickY, 1).applyMatrix4(camInverseProjection);
     const viewDirection = mousePosition.clone().sub(cameraPosition).normalize();
 
-    raycaster.set(cameraPosition, viewDirection);
+    raycaster.set(cameraPosition, viewDirection);*/
 
 
     let opened = -1;
@@ -619,6 +626,7 @@ function onDocumentClick(event) {
         let bestD = -1;
         let bestI = -1;
 
+        /*
         for (let i=0;i<panelsNum;i++)
         if (firstShow)
         {
@@ -629,7 +637,7 @@ function onDocumentClick(event) {
                 bestD = 0;
             }
 
-        }
+        }*/
 
 
         if (bestI===-1)
@@ -642,6 +650,10 @@ function onDocumentClick(event) {
     
                 let v = intersections[0].point;
     
+                /*
+                testCube.position.x = v.x;
+                testCube.position.y = v.y;
+                testCube.position.z = v.z;*/
     
     
                 for (let i=0;i<panelsNum;i++)
@@ -650,7 +662,10 @@ function onDocumentClick(event) {
                     if (panelData[i].openState !="closed")
                         continue;
     
-                    let dist = v.distanceTo(panelData[i].baseObj.getWorldPosition());
+                    let dist = v.distanceTo(panelData[i].mesh1.getWorldPosition());
+
+                    if (panelData[i].visited)
+                        dist *= 1.3;
     
                     if (bestD==-1 || dist<bestD)
                     {
